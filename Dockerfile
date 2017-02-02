@@ -13,8 +13,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 ARG ORIENTDB_DOWNLOAD_SERVER
 ENV ORIENTDB_VERSION 2.2.16
-ENV ORIENTDB_DOWNLOAD_MD5 f2733765cc00cc9e1a08c95d82f964ad
-ENV ORIENTDB_DOWNLOAD_SHA1 e65123ae7f66c0f0ac1bead8a23af58022c9106d
+ENV ORIENTDB_DOWNLOAD_MD5 dbfda032e428ff074a9ed0b40db06e74
+ENV ORIENTDB_DOWNLOAD_SHA1 0e0e0fea7060bfd3c36db194d7d5cab5b10cb949
 
 ENV ORIENTDB_DOWNLOAD_URL ${ORIENTDB_DOWNLOAD_SERVER:-http://central.maven.org/maven2/com/orientechnologies}/orientdb-community/$ORIENTDB_VERSION/orientdb-community-$ORIENTDB_VERSION.tar.gz
 
@@ -30,7 +30,8 @@ RUN apt-get update && \
     apt-get -yq install oracle-java8-installer && \
     update-alternatives --display java && \
     apt-get -yq install oracle-java8-set-default && \
-    mkdir -p /etc/service/orientdb/supervise && \
+    mkdir -p /etc/service/orientdb/run && \
+    mkdir -p /etc/service/orientdb/supervise
 
 # download distribution tar, untar and delete databases
 # http://mkt.orientdb.com/CE-2215-linux/
