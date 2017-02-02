@@ -1,0 +1,11 @@
+orientdb:
+  image: aqbs/orientdb-spatial:2.2.16
+  ports:
+    - "2424:2424"
+    - "2480:2480"
+  environment:
+    ORIENTDB_ROOT_PASSWORD: 'root'
+  volumes:
+    - /orientdb/config:/orientdb/config
+    - /orientdb/databases:/orientdb/databases
+    - /orientdb/backup:/orientdb/backup

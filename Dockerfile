@@ -2,7 +2,10 @@
 # Dockerfile to run an OrientDB (Graph) Container
 ############################################################
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> release-0.1
 # latest version uo to 2017-02-02
 FROM phusion/baseimage:0.9.19
 MAINTAINER AquaBiota Solutions AB <info@aquabiota.se>
@@ -89,4 +92,7 @@ RUN chmod 755 /etc/service/orientdb/run
 # Default command start the server
 # Is commented as we are using the
 #CMD ["server.sh", "dserver.sh"]
+<<<<<<< HEAD
 >>>>>>> 36b5479... Fix missing /etc/service/orientdb/run directory. Successfully built image
+=======
+>>>>>>> release-0.1
