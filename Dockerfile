@@ -1,8 +1,9 @@
 ############################################################
 # Dockerfile to run an OrientDB (Graph) Container
 ############################################################
-FROM phusion/baseimage:0.9.19 # latest version uo to 2017-02-02
-MAINTAINER José Beltrán <jose.beltran@aquabiota.se>
+# latest version uo to 2017-02-02
+FROM phusion/baseimage:0.9.19
+MAINTAINER AquaBiota Solutions AB <info@aquabiota.se>
 # Use baseimage-docker's init system.
 # See: [Adding additional daemons](http://phusion.github.io/baseimage-docker/#solution)
 # https://github.com/phusion/baseimage-docker#adding-additional-daemons
@@ -11,10 +12,12 @@ ENV DEBIAN_FRONTEND=noninteractive \
     JAVA_HOME=/usr/lib/jvm/java-8-oracle
 
 ARG ORIENTDB_DOWNLOAD_SERVER
-ENV ORIENTDB_VERSION 2.2.15
-ENV ORIENTDB_DOWNLOAD_MD5 ef6fdd215f17ef5df756b85c9ea09755
-ENV ORIENTDB_DOWNLOAD_SHA1 80f26162d5f7545591d6c29ecf4845d314190060
+ENV ORIENTDB_VERSION 2.2.16
+ENV ORIENTDB_DOWNLOAD_MD5 f2733765cc00cc9e1a08c95d82f964ad
+ENV ORIENTDB_DOWNLOAD_SHA1 e65123ae7f66c0f0ac1bead8a23af58022c9106d
+
 ENV ORIENTDB_DOWNLOAD_URL ${ORIENTDB_DOWNLOAD_SERVER:-http://central.maven.org/maven2/com/orientechnologies}/orientdb-community/$ORIENTDB_VERSION/orientdb-community-$ORIENTDB_VERSION.tar.gz
+
 
 RUN apt-get update && \
     apt-get -yq upgrade && \
@@ -26,18 +29,21 @@ RUN apt-get update && \
     echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && \
     apt-get -yq install oracle-java8-installer && \
     update-alternatives --display java && \
+    apt-get -yq install oracle-java8-set-default && \
     mkdir -p /etc/service/orientdb/supervise && \
 
-
 # download distribution tar, untar and delete databases
+# http://mkt.orientdb.com/CE-2215-linux/
 RUN mkdir /orientdb && \
-  wget  $ORIENTDB_DOWNLOAD_URL \
+  # #http://orientdb.com/download.php?email=unknown@unknown.com\&file=orientdb-community-$ORIENTDB_VERSION.tar.gz\&os=linux -O /tmp/orientdb-community-$ORIENTDB_VERSION.tar.gz && \
+  wget $ORIENTDB_DOWNLOAD_URL \
   && echo "$ORIENTDB_DOWNLOAD_MD5 *orientdb-community-$ORIENTDB_VERSION.tar.gz" | md5sum -c - \
   && echo "$ORIENTDB_DOWNLOAD_SHA1 *orientdb-community-$ORIENTDB_VERSION.tar.gz" | sha1sum -c - \
+  # strip NUMBER leading components from file names on extraction
   && tar -xvzf orientdb-community-$ORIENTDB_VERSION.tar.gz -C /orientdb --strip-components=1 \
   && rm orientdb-community-$ORIENTDB_VERSION.tar.gz \
-  && rm -rf /orientdb/databases/*
-
+  # Removing databases
+  && rm -rf /orientdb/databases/* \
 
 ENV PATH /orientdb/bin:$PATH
 
@@ -57,15 +63,15 @@ EXPOSE 2480
 
 #FROM orientdb:2.2.15
 
-ENV ORIENTDB_DOWNLOAD_SPATIAL_MD5 8cb548237b17bc180b08ba3a465cb9ef
-ENV ORIENTDB_DOWNLOAD_SPATIAL_SHA1 a9e5b2ea6ebd082acb915674085b10cffcc5a8b4
+ENV ORIENTDB_DOWNLOAD_SPATIAL_MD5 41a5b88b6bcea73e6037732ed6977c39
+ENV ORIENTDB_DOWNLOAD_SPATIAL_SHA1 937ed8c4990bd1ac27534449a8517a3ac7999a80
 
 ENV ORIENTDB_DOWNLOAD_SPATIAL_URL ${ORIENTDB_DOWNLOAD_SERVER:-http://central.maven.org/maven2/com/orientechnologies}/orientdb-spatial/$ORIENTDB_VERSION/orientdb-spatial-$ORIENTDB_VERSION-dist.jar
 
 RUN wget $ORIENTDB_DOWNLOAD_SPATIAL_URL \
     && echo "$ORIENTDB_DOWNLOAD_SPATIAL_MD5 *orientdb-spatial-$ORIENTDB_VERSION-dist.jar" | md5sum -c - \
     && echo "$ORIENTDB_DOWNLOAD_SPATIAL_SHA1 *orientdb-spatial-$ORIENTDB_VERSION-dist.jar" | sha1sum -c - \
-    && mv orientdb-spatial-*-dist.jar /orientdb/lib/
+    && mv orientdb-spatial-$ORIENTDB_VERSION-dist.jar /orientdb/lib/
 
 
 # Clean up APT when done.
